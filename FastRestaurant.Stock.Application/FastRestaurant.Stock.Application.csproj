@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\FastRestaurant.Domain\FastRestaurant.Domain.csproj" />
+    <ProjectReference Include="..\FastRestaurant.Stock.Domain\FastRestaurant.Stock.Domain.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
