@@ -1,13 +1,24 @@
+using FastRestaurant.Menu.Application.UseCases.Handlers;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+// REGISTRO DE SERVICIOS (Contenedor de Dependencias)
+
+// LINEA que dice a .NET que busque y habilite los controladores
+builder.Services.AddControllers();
+
+// Registrar el Handler de CQRS para que el DishesController lo pueda usar
+builder.Services.AddScoped<CreateDishHandler>();
+
+// Configuracion de Swagger (Herramienta para probar la API en desarrollo)
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// CONFIGURACION DEL PIPELINE (Rutas y Middleware)
+
+// Activa la pantalla de Swagger para hacer pruebas
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -16,29 +27,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+// Mapea las rutas de los controladores (ej: api/dishes)
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
